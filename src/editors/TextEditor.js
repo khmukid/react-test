@@ -24,7 +24,7 @@ const DEFAULT_NODE = 'paragraph'
  * @type {Function}
  */
 
-const isBoldHotkey = isKeyHotkey('mod+b')
+const isBoldHotkey = isKeyHotkey('shift+b')
 const isItalicHotkey = isKeyHotkey('mod+i')
 const isUnderlinedHotkey = isKeyHotkey('mod+u')
 const isCodeHotkey = isKeyHotkey('mod+`')
