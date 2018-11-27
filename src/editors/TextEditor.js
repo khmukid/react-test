@@ -174,7 +174,6 @@ class TextEditor extends React.Component {
           onDrop={this.onDropOrPaste}
           onPaste={this.onDropOrPaste}
           onChange={this.onChange}
-          onSaveBtn={this.onSaveBtn}
           onCancelBtn={this.onCancelBtn}
           onKeyDown={this.onKeyDown}
           renderNode={this.renderNode}
@@ -254,7 +253,7 @@ class TextEditor extends React.Component {
 
   renderNode = (props, editor, next) => {
     const { attributes, children, node, isFocused  } = props
-
+    
     switch (node.type) {
       case 'block-quote':
         return <blockquote {...attributes}>{children}</blockquote>
