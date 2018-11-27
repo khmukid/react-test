@@ -1,6 +1,6 @@
 import React from 'react'
 import { Editor, getEventRange, getEventTransfer } from 'slate-react'
-import { Block, Value } from 'slate'
+import { Block, Value} from 'slate'
 
 import imageExtensions from 'image-extensions'
 import isUrl from 'is-url'
@@ -28,6 +28,7 @@ const isBoldHotkey = isKeyHotkey('shift+b')
 const isItalicHotkey = isKeyHotkey('mod+i')
 const isUnderlinedHotkey = isKeyHotkey('mod+u')
 const isCodeHotkey = isKeyHotkey('mod+`')
+const isShifTabHotkey = isKeyHotkey('shift+tab')
 
 
 /**
@@ -263,8 +264,8 @@ class TextEditor extends React.Component {
         return <h1 {...attributes}>{children}</h1>
       case 'heading-two':
         return <h2 {...attributes}>{children}</h2>
-      case 'list-item':
-        return <li {...attributes}>{children}</li>
+      case 'list-item': 
+         return <li {...attributes}>{children}</li>
       case 'numbered-list':
         return <ol {...attributes}>{children}</ol>
       case 'image': {
@@ -342,6 +343,20 @@ class TextEditor extends React.Component {
 
   onKeyDown = (event, editor, next) => {
     let mark
+    
+    const { value } = editor
+    const { document } = value
+
+    const isBullet = value.blocks.some(block => {
+      return !!document.getClosest(block.key, parent => parent.type === 'bulleted-list')
+    })
+
+    const isNumber = value.blocks.some(block => {
+      return !!document.getClosest(block.key, parent => parent.type === 'numbered-list')
+    })
+
+    const currentType= isBullet ? 'bulleted-list' : isNumber ? 'numbered-list' : '';
+
 
     if (isBoldHotkey(event)) {
       mark = 'bold'
@@ -351,12 +366,20 @@ class TextEditor extends React.Component {
       mark = 'underlined'
     } else if (isCodeHotkey(event)) {
       mark = 'code'
+    } else if (isShifTabHotkey(event)) {
+      mark = '';
+      this.shiftTabPress(currentType,editor);
     } else {
       return next()
     }
 
     event.preventDefault()
-    editor.toggleMark(mark)
+    if(mark !== '')
+      editor.toggleMark(mark)
+  }
+
+  shiftTabPress = (type,editor) => {
+    editor.setBlocks('list-item').wrapBlock(type)
   }
 
   /**
@@ -377,7 +400,7 @@ class TextEditor extends React.Component {
    * @param {Event} event
    * @param {String} type
    */
-
+  
   onClickBlock = (event, type) => {
     event.preventDefault()
 
